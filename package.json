@@ -1,0 +1,15 @@
+{
+  "name": "atomic",
+  "version": "1.0.0",
+  "description": "atomic",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "test",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^5.4.1"
+  }
+}
