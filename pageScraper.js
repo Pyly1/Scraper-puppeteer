@@ -5,7 +5,7 @@ const scraperObject = {
 
         // Go to login page
         await page.goto(this.url);
-        console.log("Navigating to ${this.url}...");
+        console.log(`Navigating to ${this.url}..`);
 
         // Wait for the required DOM to be rendered
         await page.waitForSelector(".form-group");
@@ -28,19 +28,22 @@ const scraperObject = {
 
         // Output Accounts info to console
         console.log("Accounts info:", accountsData);
+        accountsData.map
 
         //Get data
-        async function getTableData(headerSelector, valueSelector, textProcessFunction) {
+        async function getTableData(headerSelector, valueSelector, objectProcessFunction) {
             const getHeaders = await page.$x(headerSelector);
             const getValues = await page.$x(valueSelector);
 
-            const result = [];
+            let resultObject = {};
             for (let i = 0; i < getHeaders.length; i++) {
                 const header = await page.evaluate(item => item.innerText, getHeaders[i]);
                 const value = await page.evaluate(item => item.innerText, getValues[i]);
-                result.push(textProcessFunction(header, value));
+                //result.push(textProcessFunction(header, value));//reneme to object processing 
+                resultObject[header] = value;
+                //resultObject.objectProcessFunction(header, value);
             }
-            return result;
+            return resultObject;
         }
 
         //Get Income data 
@@ -48,21 +51,31 @@ const scraperObject = {
             ".//*[text() = 'Income']/following::table[1]//td",
             ".//*[text() = 'Income']/following::table[1]//th",
             function (header, value) {
-                return header + ": " + value;
+                return {[header]: value};
             }
         );
-        
+        /*let incomeDataObject = {};
+        incomeData.forEach(function(item){
+            incomeDataObject = {...incomeDataObject, ...item};
+        });*/
         // Output Income data to console
         console.log("Income data:", incomeData);
+
 
         //Get Profile data
         const profileData = await getTableData(
             ".//*[text() = 'Profile']/following::table[1]//td",
             ".//*[text() = 'Profile']/following::table[1]//th",
             function (header, value) {
-                return (header + ": " + value).replace("\n", " ");
+                let clearvalue = value.replace("\n", " ");//check please
+                return ({[header]: clearvalue});//.replace("\n", " ");
             }
         );
+
+        /*let profileDataObject = {};
+        profileData.forEach(function(item){
+            profileDataObject = {...profileDataObject, ...item}
+        });*/
         
         // Output Profile data to console
         console.log("Profile data:", profileData);
@@ -72,12 +85,21 @@ const scraperObject = {
             ".//td[@class='font-weight-bold']",
             ".//td[@class='font-weight-bold']/following-sibling::td[1]",
             function (header, value) {
-                return "Paydate: " + header + " Check Amount: " + value;
+                let header1 = "Paydate - " + header;
+                let value1 = "Check Amount - " + value; //check please
+
+                return {[header1]: value1};
             }
         );
-        
+/*
+        let payrollDataObject = {};
+        payrollData.forEach(function(item){
+            payrollDataObject = {...payrollDataObject, ...item}
+        });
+*/
         // Output Payroll activity data to console
         console.log("Payroll activity data:", payrollData);
+        
     }
 }
 
